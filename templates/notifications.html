@@ -1,0 +1,28 @@
+{% if user.is_authenticated %}
+<!-- Уведомления в шапке -->
+<li class="nav-item dropdown">
+    <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
+        <i class="fas fa-bell"></i>
+        {% if user.notifications.unread.count > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ user.notifications.unread.count }}
+            </span>
+        {% endif %}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" style="min-width: 300px;">
+        <li class="dropdown-header">Уведомления</li>
+        {% for notification in user.notifications.unread|slice:":5" %}
+            <li>
+                <a class="dropdown-item" href="{{ notification.link }}">
+                    <small class="text-muted">{{ notification.created_at|timesince }} назад</small><br>
+                    {{ notification.message }}
+                </a>
+            </li>
+        {% empty %}
+            <li><a class="dropdown-item text-muted" href="#">Нет новых уведомлений</a></li>
+        {% endfor %}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-center" href="#">Все уведомления</a></li>
+    </ul>
+</li>
+{% endif %}

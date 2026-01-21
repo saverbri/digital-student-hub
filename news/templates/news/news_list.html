@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Новости{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Новости</h1>
+    
+    {% if news %}
+        <div class="row">
+            {% for item in news %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <p class="card-text">{{ item.content|truncatewords:30 }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    {{ item.created_at|date:"d.m.Y H:i" }} | 
+                                    {{ item.get_category_display }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'news_detail' item.slug %}" class="btn btn-primary btn-sm">
+                                Читать далее
+                            </a>
+                            <span class="text-muted ms-2">
+                                👁 {{ item.views }} просмотров
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Новостей пока нет.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

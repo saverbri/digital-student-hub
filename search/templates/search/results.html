@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Результаты поиска</h1>
+    
+    {% if query %}
+        <p>По запросу "<strong>{{ query }}</strong>" найдено:</p>
+        
+        <!-- Новости -->
+        {% if results.news %}
+            <h3 class="mt-4">📰 Новости ({{ results.news.count }})</h3>
+            <div class="list-group mb-4">
+                {% for item in results.news %}
+                    <a href="{% url 'news_detail' item.slug %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ item.title }}</h5>
+                            <small>{{ item.created_at|date:"d.m.Y" }}</small>
+                        </div>
+                        <p class="mb-1">{{ item.content|truncatewords:30 }}</p>
+                        <small>{{ item.get_category_display }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Курсы -->
+        {% if results.courses %}
+            <h3 class="mt-4">🎓 Курсы ({{ results.courses.count }})</h3>
+            <div class="row mb-4">
+                {% for course in results.courses %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ course.title }}</h5>
+                                <p class="card-text">{{ course.description|truncatewords:30 }}</p>
+                                <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary btn-sm">Перейти</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Материалы -->
+        {% if results.materials %}
+            <h3 class="mt-4">📚 Материалы ({{ results.materials.count }})</h3>
+            <div class="list-group mb-4">
+                {% for material in results.materials %}
+                    <div class="list-group-item">
+                        <h5>{{ material.title }}</h5>
+                        <p>Курс: <a href="{% url 'course_detail' material.course.slug %}">{{ material.course.title }}</a></p>
+                        <small>Тип: {{ material.get_material_type_display }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Если ничего не найдено -->
+        {% if not results.news and not results.courses and not results.materials %}
+            <div class="alert alert-warning mt-4">
+                По вашему запросу ничего не найдено.
+            </div>
+        {% endif %}
+        
+    {% else %}
+        <div class="alert alert-info">
+            Введите поисковый запрос в поле поиска.
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{% url 'home' %}" class="btn btn-secondary">← На главную</a>
+    </div>
+</div>
+{% endblock %}

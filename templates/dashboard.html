@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Личный кабинет</h1>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар" class="user-avatar mb-3">
+                {% endif %}
+                <h4>{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted">{{ user.get_role_display }}</p>
+                <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+                {% if user.is_student %}
+                    <p><i class="fas fa-users"></i> Группа: {{ user.course_group|default:"Не указана" }}</p>
+                {% elif user.is_teacher %}
+                    <p><i class="fas fa-university"></i> Кафедра: {{ user.department|default:"Не указана" }}</p>
+                {% endif %}
+                <a href="{% url 'profile' %}" class="btn btn-primary">Редактировать профиль</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h4>Мои курсы</h4>
+                {% if user.is_student %}
+                    <ul>
+                        {% for course in user.enrolled_courses.all %}
+                            <li><a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a></li>
+                        {% empty %}
+                            <li>Вы не записаны ни на один курс.</li>
+                        {% endfor %}
+                    </ul>
+                {% elif user.is_teacher %}
+                    <ul>
+                        {% for course in user.course_set.all %}
+                            <li><a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a></li>
+                        {% empty %}
+                            <li>У вас нет курсов.</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Виджет активности -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>📈 Ваша активность</h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="display-4 text-primary">{{ user.enrolled_courses.count }}</div>
+                <small>Курсов</small>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 text-success">{{ completed_materials }}</div>
+                <small>Материалов пройдено</small>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 text-warning">{{ active_days }}</div>
+                <small>Дней активности</small>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="display-4 text-info">{{ last_login|timesince }}</div>
+                <small>Последний вход</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

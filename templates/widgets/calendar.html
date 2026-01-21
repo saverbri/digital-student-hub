@@ -1,0 +1,23 @@
+<div class="card">
+    <div class="card-header">
+        <h5>📅 Ближайшие события</h5>
+    </div>
+    <div class="card-body">
+        <div id="mini-calendar"></div>
+        <ul class="list-group list-group-flush mt-3">
+            {% for event in upcoming_events %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ event.title }}</strong><br>
+                        <small class="text-muted">{{ event.date|date:"d.m.Y H:i" }}</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ event.course.title }}</span>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted text-center">
+                    Нет предстоящих событий
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ course.title }}</h1>
+            <p class="text-muted">
+                Преподаватель: <strong>{{ course.teacher.get_full_name|default:course.teacher.username }}</strong>
+            </p>
+            
+            <div class="mt-4">
+                <h4>Описание курса</h4>
+                <p>{{ course.description }}</p>
+            </div>
+            
+            <div class="mt-4">
+                <h4>Информация</h4>
+                <ul>
+                    <li>Дата создания: {{ course.created_at|date:"d.m.Y" }}</li>
+                    <li>Студентов записано: {{ course.students.count }}</li>
+                </ul>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'course_materials' course.slug %}" class="btn btn-success">
+                    📚 Учебные материалы
+                </a>
+                
+                {% if user.is_authenticated %}
+                    {% if user.is_teacher and user == course.teacher %}
+                        <button class="btn btn-warning" disabled>Вы преподаватель курса</button>
+                    {% elif user.is_student %}
+                        {% if user in course.students.all %}
+                            <button class="btn btn-secondary" disabled>Вы уже записаны</button>
+                        {% else %}
+                            <button class="btn btn-primary">Записаться на курс</button>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'course_detail' course.slug %}" class="btn btn-outline-primary">
+                        Войдите, чтобы записаться
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'course_list' %}" class="btn btn-outline-secondary ms-2">
+                    ← Назад к курсам
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

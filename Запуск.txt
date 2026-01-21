@@ -1,0 +1,15 @@
+venv\Scripts\activate
+python manage.py runserver
+https://conjoint-clemencia-umbonate.ngrok-free.dev
+
+Главная страница - http://localhost:8000
+
+admin / admin123 - администратор
+
+teacher1 / teacher1123 - преподаватель
+
+student1 / student1123 - студент
+
+superadmin / superadmin123 - суперадмин
+
+testuser / testuser123 - тестовый пользователь

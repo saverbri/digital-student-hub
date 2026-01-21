@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Курсы{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Все курсы</h1>
+    
+    {% if courses %}
+        <div class="row">
+            {% for course in courses %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text">{{ course.description|truncatewords:30 }}</p>
+                            <p class="text-muted">
+                                <small>
+                                    Преподаватель: {{ course.teacher.get_full_name|default:course.teacher.username }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary">
+                                Подробнее
+                            </a>
+                            {% if user.is_authenticated and user in course.students.all %}
+                                <span class="badge bg-success ms-2">Вы записаны</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Пока нет доступных курсов.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

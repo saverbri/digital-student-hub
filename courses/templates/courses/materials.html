@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Материалы курса: {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'course_list' %}">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active">Материалы</li>
+        </ol>
+    </nav>
+    
+    <h1 class="mb-4">Материалы курса: {{ course.title }}</h1>
+    
+    {% if materials %}
+        <div class="list-group">
+            {% for material in materials %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            {% if material.material_type == 'lecture' %}📖{% endif %}
+                            {% if material.material_type == 'practice' %}📝{% endif %}
+                            {% if material.material_type == 'video' %}🎬{% endif %}
+                            {% if material.material_type == 'book' %}📚{% endif %}
+                            {{ material.title }}
+                        </h5>
+                        <small class="text-muted">
+                            {{ material.get_material_type_display }}
+                        </small>
+                    </div>
+                    
+                    {% if material.content %}
+                        <p class="mb-1">{{ material.content|truncatewords:50 }}</p>
+                    {% endif %}
+                    
+                    <div class="mt-2">
+                        {% if material.file %}
+                            <a href="{{ material.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                                📥 Скачать файл
+                            </a>
+                        {% endif %}
+                        
+                        {% if material.external_link %}
+                            <a href="{{ material.external_link }}" class="btn btn-sm btn-info" target="_blank">
+                                🔗 Перейти по ссылке
+                            </a>
+                        {% endif %}
+                        
+                        <small class="text-muted ms-2">
+                            Добавлено: {{ material.created_at|date:"d.m.Y" }}
+                        </small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Материалы для этого курса пока не добавлены.
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{% url 'course_detail' course.slug %}" class="btn btn-secondary">
+            ← Назад к курсу
+        </a>
+    </div>
+</div>
+{% endblock %}
